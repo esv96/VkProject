@@ -46,7 +46,7 @@ class VkClient:
         loop = asyncio.get_event_loop()
         try:
             # friend_groups = loop.run_until_complete(VkWorker.friends_run(ids))
-            future = asyncio.ensure_future(VkClient.__friends_run(ids))
+            future = asyncio.ensure_future(self.__friends_run(ids))
             friend_groups = loop.run_until_complete(future)
             return friend_groups
         except ClientOSError:
@@ -70,7 +70,7 @@ class VkClient:
 
             req_count = math.ceil(count/100)
             for i in range(0, req_count):
-                task = asyncio.ensure_future(VkClient.__posts_fetch(user_id, i*100))
+                task = asyncio.ensure_future(self.__posts_fetch(user_id, i*100))
                 tasks.append(task)
 
             results = await asyncio.gather(*tasks)
@@ -89,9 +89,9 @@ class VkClient:
     def get_posts_for_many_users(self, ids: List[int]):
         loop = asyncio.get_event_loop()
         try:
-            future = asyncio.ensure_future(VkClient.__posts_run(ids))
+            future = asyncio.ensure_future(self.__posts_run(ids))
             post_groups = loop.run_until_complete(future)
-            #post_groups = loop.run_until_complete(VkClient.__posts_run(ids))
+            #post_groups = loop.run_until_complete(self.__posts_run(ids))
             return post_groups
         except ClientOSError:
             raise ConnectionError("Cannot connect to vk")
