@@ -1,6 +1,6 @@
 import time
 from bottle import Bottle, run, view, static_file
-from vk import VkClient
+from vk.vkclient import VkClient
 app = Bottle()
 
 group_id = "30390813"
@@ -8,7 +8,7 @@ group_id = "30390813"
 t1 = time.clock()
 vk_client = VkClient()
 members = vk_client.get_members(group_id)
-friend_groups = vk_client.get_friends_for_many_users([member['id'] for member in members])
+friend_groups = vk_client.get_friends_for_many_users([member.uid for member in members])
 print(time.clock()-t1)
 print("graph is loaded")
 
@@ -31,11 +31,11 @@ def user(user_id=0):
     t1 = time.clock()
     member = members[user_id]
     friends = friend_groups[user_id]
-    post_groups = vk_client.get_posts_for_many_users(friend['id'] for friend in friends)
+    post_groups = vk_client.get_posts_for_many_users([friend.uid for friend in friends])
     news_feed = []
     for post_group in post_groups:
         news_feed.extend(post_group)
-    news_feed.sort(key=lambda post: post['likes']['count'], reverse=True)
+    news_feed.sort(key=lambda post: post.likes, reverse=True)
     print(time.clock()-t1)
     return dict(user=member, posts=news_feed[:100])
 

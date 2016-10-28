@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{{user['first_name']}} {{user['last_name']}}</title>
+    <title>{{user.first_name}} {{user.last_name}}</title>
     <style>
     body{
         background-color: aliceblue;
@@ -26,17 +26,14 @@
     <div class="main">
         % for post in posts:
         <div class="post">
-            <a href="https://vk.com/wall{{post['owner_id']}}_{{post['id']}}">
-                Пост {{post['owner_id']}}_{{post['id']}}
+            <a href="https://vk.com/wall{{post.owner_id}}_{{post.pid}}">
+                Пост {{post.owner_id}}_{{post.pid}}
             </a>
 
-                <p>{{post['text'][:200]+'...' if not post['text'] == '' else ''}}</p>
+                <p>{{post.text[:200]+'...' if not post.text == '' else ''}}</p>
 
-            % if 'attachments' in post and 'photo' in post['attachments'][0]:
-                    <img class="lazy" data-original="{{post['attachments'][0]['photo']['photo_604']}}">
-            % end
-            % if 'copy_history' in post:
-                <p>{{post['copy_history'][0]['text'][:100]+'...' if not post['copy_history'][0]['text'] == '' else ''}}</p>
+            % if post.image:
+                    <img class="lazy" data-original="{{post.image}}">
             % end
         </div>
         % end

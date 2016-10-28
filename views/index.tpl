@@ -45,9 +45,9 @@
             <a href="/id{{idx}}">
 
 
-            <img class="lazy" data-original="{{user['photo_100']}}" width="100px" height="100px">
+            <img class="lazy" data-original="{{user.photo_url}}" width="100px" height="100px">
 
-                <span class="name">{{user['first_name']}}<br>{{user['last_name']}}</span>
+                <span class="name">{{user.first_name}}<br>{{user.last_name}}</span>
             </a>
         </div>
         % end
