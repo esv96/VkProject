@@ -7,7 +7,7 @@ import math
 class SyncVkApi:
     def __init__(self):
         self.__session = requests.Session()
-        self.token = 'f2b183cb3c18e73952bcb552b646ffa0d9368c26b9f3f2d27ec381b394463e708fd041d522cf453c41b7f'
+        self.token = 'token'
 
     def get_members(self, group_id: str) -> List[Dict]:
         try:
