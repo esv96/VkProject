@@ -1,16 +1,11 @@
-import time
-from bottle import Bottle, run, view, static_file
-from vk.vkclient import VkClient
+from bottle import Bottle, view, static_file
+from db.service import DbService, Sorting
+from pony.orm.integration.bottle_plugin import PonyPlugin
+
+from db.models import *
+
 app = Bottle()
-
-group_id = "30390813"
-
-t1 = time.clock()
-vk_client = VkClient()
-members = vk_client.get_members(group_id)
-friend_groups = vk_client.get_friends_for_many_users([member.uid for member in members])
-print(time.clock()-t1)
-print("graph is loaded")
+app.install(PonyPlugin())
 
 
 @app.route('/static/<filename>')
@@ -21,23 +16,21 @@ def static(filename):
 @app.route('/')
 @view('index')
 def index():
+    members = select(p for p in User if p.is_member).order_by(User.id_)
     return dict(members=members)
 
 
 @app.route('/id<user_id:int>')
 @view('user')
 def user(user_id=0):
-    print("news_feed ", user_id)
-    t1 = time.clock()
-    member = members[user_id]
-    friends = friend_groups[user_id]
-    post_groups = vk_client.get_posts_for_many_users([friend.uid for friend in friends])
-    news_feed = []
-    for post_group in post_groups:
-        news_feed.extend(post_group)
-    news_feed.sort(key=lambda post: post.likes, reverse=True)
-    print(time.clock()-t1)
-    return dict(user=member, posts=news_feed[:100])
+    try:
+        member = User[user_id]
+        posts = DbService.get_news_feed(member.id_, Sorting.likes)
+        return dict(user=member, posts=posts)
+    except pony.orm.core.ObjectNotFound:
+        return "not found"
 
-run(app, host='localhost', port=8080, debug=True)
+
+#run(app, server='paste', host='localhost', port=8080)
+app.run(host='localhost', port=8080)
 

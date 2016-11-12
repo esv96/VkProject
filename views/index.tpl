@@ -40,9 +40,9 @@
 </head>
 <body>
     <div class="main">
-        % for idx, user in enumerate(members):
+        % for user in members:
         <div class="user">
-            <a href="/id{{idx}}">
+            <a href="/id{{user.id_}}">
 
 
             <img class="lazy" data-original="{{user.photo_url}}" width="100px" height="100px">

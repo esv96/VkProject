@@ -26,14 +26,24 @@
     <div class="main">
         % for post in posts:
         <div class="post">
-            <a href="https://vk.com/wall{{post.owner_id}}_{{post.pid}}">
-                Пост {{post.owner_id}}_{{post.pid}}
+            <a href="https://vk.com/wall{{post.owner.id_}}_{{post.id_}}">
+                Пост {{post.owner.id_}}_{{post.id_}}
             </a>
 
                 <p>{{post.text[:200]+'...' if not post.text == '' else ''}}</p>
 
-            % if post.image:
-                    <img class="lazy" data-original="{{post.image}}">
+            % if post.attachments:
+                    %for att in post.attachments:
+                        %if att['type'] == 'photo':
+                            <div><img class="lazy" data-original="{{att['url']}}"></div>
+                        %elif att['type'] == 'audio' and att['url'] != '':
+                            <audio controls>
+                                <source src="{{att['url']}}">
+                            </audio>
+                        %elif att['type'] == 'link':
+                            <div><a href="{{att['url']}}">{{att['title']}}</a></div>
+                        %end
+                    %end
             % end
         </div>
         % end

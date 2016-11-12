@@ -13,18 +13,20 @@ class User:
 
 
 class Post:
-    def __init__(self, pid: int, from_id: int, owner_id: int, date: datetime, text: str, likes: int,
-                 comments: int, reposts: int, image: str = None):
+    def __init__(self, pid: int, owner_id: int, date: datetime, text: str, comments: int,
+                 likes: int, reposts: int, attachments: dict = None, original_post_id: str = None,
+                 share_count: int = None):
         self.pid = pid
-        self.from_id = from_id
         self.owner_id = owner_id
         self.date = date
         self.text = text
-        self.likes = likes
         self.comments = comments
+        self.likes = likes
         self.reposts = reposts
-        self.image = image
+        self.attachments = attachments
+        self.original_post_id = original_post_id
+        self.share_count = share_count
 
     def __repr__(self):
-        return "VkPost {}_{}".format(self.owner_id, self.pid)
+        return "<VkPost {}_{}>".format(self.owner_id, self.pid)
 
