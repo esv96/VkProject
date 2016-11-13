@@ -1,19 +1,18 @@
 import requests
 import requests.exceptions
 from typing import List, Dict
-import math
+from vk.vktoken import token #token str
 
 
 class SyncVkApi:
     def __init__(self):
         self.__session = requests.Session()
-        self.token = 'token'
 
     def get_members(self, group_id: str) -> List[Dict]:
         try:
             res = self.__session.get('https://api.vk.com/method/groups.getMembers',
                                      params={'group_id': group_id, 'fields': 'photo_100',
-                                             'access_token': self.token, 'v': '5.57'})
+                                             'access_token': token, 'v': '5.57'})
         except requests.exceptions.ConnectionError:
             raise ConnectionError("Cannot connect to vk")
         vk_members = res.json()['response']['items']
