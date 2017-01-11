@@ -1,3 +1,4 @@
+from concurrent.futures import ThreadPoolExecutor
 from datetime import timedelta
 from multiprocessing.dummy import Pool as ThreadPool
 
@@ -40,8 +41,8 @@ class DbUpdater:
             User[i].is_member = False
         print("members ok")
 
-        with ThreadPool(30) as pool:
-            friend_groups = pool.map(self.vk_client.get_friends, [member.id_ for member in members])
+        with ThreadPoolExecutor(max_workers=30) as executor:
+            friend_groups = list(executor.map(self.vk_client.get_friends, [member.id_ for member in members]))
         print("friends ok")
         for idx, member in enumerate(members):
             friends_set = set((i.id_ for i in member.friends))
@@ -68,17 +69,16 @@ class DbUpdater:
 
     @db_session
     def update_posts(self):
-        users = select(p for p in User if not p.is_member)
-        pool = ThreadPool(30)
-        pool.map(self.update_user_post, [user.id_ for user in users])
-        pool.close()
-        pool.join()
+        users = select(p for p in User)
+        with ThreadPoolExecutor(max_workers=30) as executor:
+            for user in users:
+                executor.submit(self.update_user_post, user.id_)
 
     @db_session
     def update_user_post(self, user_id):
         user = User[user_id]
         post_set = set((i.id_ for i in user.posts))
-        vk_posts = self.vk_client.get_posts(user.id_, interval=timedelta(days=30))
+        vk_posts = self.vk_client.get_posts(user.id_, interval=timedelta(days=1))
         for vk_post in vk_posts:
             try:
                 post = Post[vk_post.owner_id, vk_post.pid]
